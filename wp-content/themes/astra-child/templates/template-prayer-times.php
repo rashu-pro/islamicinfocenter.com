@@ -576,7 +576,7 @@ get_header();
 
     .prayer-times-generation {
       width: 100%;
-      padding: 20px 0 0px 0;
+      padding: 40px 0 60px 0;
     }
 
     .section-design.section-head-search {
@@ -684,7 +684,7 @@ get_header();
       }
 
       .prayer-times-generation {
-        padding: 50px 0 0px 0;
+        padding: 30px 0 50px 0;
       }
 
       .section-design {
@@ -768,7 +768,7 @@ get_header();
   </style>
 
   <section class="prayer-times-generation">
-    <div class="container">
+    <div class="container" style="display: none">
       <div class="setting-form section-design section-head-search">
         <div>
           <div class="location-section" style="margin-bottom: 20px;">
@@ -937,74 +937,6 @@ get_header();
           </div>
 
         </div>
-
-        <!-- MONTHLY PRAYER TIMES -->
-        <div class="prayer-time-monthly section-design">
-          <div class="row">
-            <div class="pt-box-header col-md-12">
-              <div class="box-title">
-                Prayer Timetable Monthly
-              </div>
-              <div class="row monthly-print-option">
-                <div class="col-sm-6 text-left">
-                  <p class="select-month">Select month:</p>
-                  <select class="form-control month-selector-js" id="monthly-print"
-                          style="min-width:100%;max-width:500px;">
-
-                  </select>
-                </div>
-
-                <div class="col-sm-6 text-md-right export-btn-holder" style="margin-top:20px">
-                  <form action="<?php echo get_template_directory_uri() ?>/generate-pdf.php" method="POST"
-                        class="pdf-generation-form-js">
-                    <textarea style="display: none;" name="html" class="html-string-js"></textarea>
-                    <input type="hidden" name="pageHeading" class="page-heading-js">
-                    <input type="hidden" name="calculationMethod" class="foot-calculation-method-js">
-                    <input type="hidden" name="juristicMethod" class="foot-juristic-method-js">
-                    <!-- <input type="hidden" value="" name="htmlString" class="html-string-js"> -->
-                    <button type="submit" class="btn btn-download btn-download-pdf-js"
-                            style="padding:10px 16px;cursor:pointer">
-                      <i aria-hidden="true" class="fa fa-cloud-download"></i>
-                      Download
-                    </button>
-                  </form>
-
-                  <a class="btn btn-print btn-print-js"
-                     data-url="<?php echo get_permalink(get_page_by_path('print-prayer-times')) ?>" href="#"
-                     target="_blank">
-                    <i aria-hidden="true" class="fa fa-print"></i>
-                    Print
-                  </a>
-                </div>
-
-              </div>
-              <div class="html-string-wrapper-js">
-                <div class="table-responsive">
-                  <table cellspacing="0" summary="monthly-prayer" class="prayer-table table prayer-table-monthly-js"
-                         id="prayer-table">
-                    <thead>
-                    <tr>
-                      <th class="month-name-js"></th>
-                      <th>Fajr</th>
-                      <th>Sunrise</th>
-                      <th>Dhuhar</th>
-                      <th>Asr</th>
-                      <th>Magrib</th>
-                      <th>Isha</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                  </table>
-
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
       </div>
 
 
@@ -1032,11 +964,6 @@ get_header();
 
 get_footer();
 ?>
-  <!-- google map api -->
-  <!--    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRIIew-eQp2QjI5mRLFOE-qoUnl-qKC38&libraries=places&callback=initMap"></script>-->
-  <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRIIew-eQp2QjI5mRLFOE-qoUnl-qKC38&libraries=places"></script>
-
   <!-- MOMENT JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
@@ -1408,105 +1335,6 @@ get_footer();
         const foundMonth = months.find(month => month.value === parseInt(value));
         return foundMonth ? foundMonth.monthname : null;
       }
-
-      /**
-       * =====================
-       * Initialize google map place api for address autocomplete
-       * Call the 'prayerTimesToday()' and 'prayerTimesMonthly()' on place change event
-       */
-      function initMap() {
-        let addressFieldsSelector = document.getElementById('current-location');
-        addressFieldsSelector.style.backgroundImage = "url('https://res.cloudinary.com/secure-api/image/upload/v1683720094/secure-api/Secure-api/images/mjomeg9bme4yuh2tlr5q.png')";
-        addressFieldsSelector.style.backgroundRepeat = "no-repeat";
-        addressFieldsSelector.style.backgroundPosition = "99% 50%";
-        addressFieldsSelector.style.backgroundSize = "auto";
-
-        // Create the autocomplete object
-        const autocomplete = new google.maps.places.Autocomplete(addressFieldsSelector);
-        // Set the fields to retrieve from the Places API
-        // autocomplete.setFields(['formatted_address']);
-        autocomplete.setFields(['address_components', 'formatted_address', 'geometry']);
-
-        // When a place is selected, populate the address fields in your form
-        autocomplete.addListener('place_changed', function () {
-          $('.loader-div').addClass('active');
-          const place = autocomplete.getPlace();
-          if (!place.formatted_address) {
-            console.log('No address available for this place.');
-            return;
-          }
-
-          // Do something with the selected address
-          // Retrieve the country, state, and city names from the address components
-          let streetNumber, routeName, countryName, stateName, cityName, postalCode;
-          for (const component of place.address_components) {
-            if (component.types.includes('country')) {
-              countryName = component.long_name;
-            } else if (component.types.includes('administrative_area_level_1')) {
-              stateName = component.long_name;
-            } else if (component.types.includes('locality') || component.types.includes('postal_town')) {
-              cityName = component.long_name;
-            } else if (component.types.includes('administrative_area_level_3')) {
-              if (!cityName) cityName = component.long_name;
-            } else if (component.types.includes('postal_code')) {
-              postalCode = component.long_name;
-            } else if (component.types.includes('street_number')) {
-              streetNumber = component.long_name;
-            } else if (component.types.includes('route')) {
-              routeName = component.long_name;
-            }
-          }
-
-          document.querySelector('.search-location-js').value = '';
-          if (!cityName) {
-            cityName = stateName;
-            if (!stateName) {
-              cityName = countryName;
-            }
-          }
-          document.querySelector('.search-location-js').value = cityName;
-          document.querySelector('.city-name-js').innerHTML = cityName;
-
-          const url = "https://nominatim.openstreetmap.org/search?format=json&limit=3&q=" + cityName;
-
-          fetch(url)
-            .then(response => response.json())
-            .then(data => {
-              const currentLat = data[0].lat;
-              const currentLon = data[0].lon;
-              $('.global-lat-js').val(currentLat);
-              $('.global-lon-js').val(currentLon);
-
-              const zoneUrl = `https://api.timezonedb.com/v2.1/get-time-zone?key=21LBGVALUT5J&format=json&by=position&lat=${data[0].lat}&lng=${data[0].lon}`;
-              fetch(zoneUrl)
-                .then(response => response.json())
-                .then(data => {
-                  const currentOffset = data.gmtOffset / 60 / 60;
-
-                  $('.timezone-js').val(data.zoneName);
-                  $('.current-date-js').val(new Date(data.formatted));
-
-                  decideCalculationMethod(currentOffset);
-
-                  //=== TODAY'S PRAYER TIMES
-                  prayerTimesToday(new Date(data.formatted), [currentLat, currentLon], currentOffset);
-                  prayerTimesMonthly(parseInt($('.month-selector-js').val()), [currentLat, currentLon], currentOffset)
-                  $('.loader-div').removeClass('active');
-                })
-                .catch(err => {
-                  console.log(err);
-                  $('.loader-div').removeClass('active');
-                })
-            })
-            .catch(err => {
-              console.log(err);
-              $('.loader-div').removeClass('active');
-            })
-
-        });
-      }
-
-      initMap();
 
       //=== PRAYER TIMES BY MONTH
       $(document).on('change', '.month-selector-js', function () {
