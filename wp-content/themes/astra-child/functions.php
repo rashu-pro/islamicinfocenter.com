@@ -249,3 +249,24 @@ function enqueue_shortcode_scripts() {
 }
 add_action('wp_enqueue_scripts', 'enqueue_shortcode_scripts');
 
+// Change "read more" text
+function astra_post_read_more() {
+  return __('Learn More »', 'astra');
+}
+add_filter('astra_post_read_more', 'astra_post_read_more');
+
+function add_script_to_footer() {
+  ?>
+  <script type="text/javascript">
+    console.log('clicked!');
+    jQuery(function ($){
+      console.log('clicked!');
+      $('.quiz-answer-block-js .show-answer-js').on('click', function(){
+        const self = $(this);
+        self.closest('.quiz-answer-block-js').find('.answer-block-js').toggle();
+      })
+    })
+  </script>
+  <?php
+}
+add_action('wp_footer', 'add_script_to_footer');
